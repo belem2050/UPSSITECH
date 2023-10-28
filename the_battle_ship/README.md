@@ -1,14 +1,10 @@
 # The-BattleShip
 
+A java project to simulate a battle of ships
 ## How to run ?
 A user manual is in /data :https://github.com/BELEMMoumouni/The-BattleShip/blob/main/data/User%20manual%20battleship.pdf translated from french into english with DEEPL
 
 ## Subject
-
-
-
-
-
 
 This example corresponds to the modeling of a naval battle. The principles are the following:
  - the game is composed of 3 teams and a game board (which will include in particular a "drawing" to visualize the state of the game and the movement of the ships); 
