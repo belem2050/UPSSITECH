@@ -1,0 +1,3 @@
+/home/belem/Desktop/repo_cleaning/UPSSITECH/agenda/CMakeFiles/agenda.dir
+/home/belem/Desktop/repo_cleaning/UPSSITECH/agenda/CMakeFiles/edit_cache.dir
+/home/belem/Desktop/repo_cleaning/UPSSITECH/agenda/CMakeFiles/rebuild_cache.dir
