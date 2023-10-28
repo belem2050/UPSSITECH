@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- fichier grammaire_horaire.grxml -->
+
+<grammar version="1.0" root="Horaire" xml:lang="fr" >
+
+<meta name="description" content="grammaire des horaires"/>
+<meta name="author" content="Moumouni BELEM"/>
+<meta name="copyright" content="free for any purpose"/>
+
+
+
+<!--
+		Ghoraire = (V_THor, V_NHor, Horaire, RHor)
+
+		V_THor  = { une, deux,..., cinquante-neuf, quart, demi, demie, et-demie, }
+		V_NHor = { moins, et, le,}
+
+		Horaire -> NB_Heure + [HEURE] [+NB_MINUTE] [+PRE] [+MINUTE]
+
+		NB_Heure -> chiffres | MIDNUIT
+		MIDNUIT -> midi | minuit
+		HEURE -> heures | heure | h
+		PRE -> moins| et | moins le | demi |et-demi | demie | quart
+		NB_MINUTE -> un | une | ... cinquante-neuf
+		MINUTE -> minute |minutes |min |mn
+
+-->
+
+
+
+
+    <rule id = "Horaire" scope = "public">
+
+		 <one-of>
+		 	<item repeat = "0-1"> a </item>
+			<item repeat = "0-1"> dans </item> 
+			<item repeat = "0-1"> il est</item>         		
+	    </one-of>
+		<item repeat = "0-1"> a </item>
+	    <one-of>
+	            <item> <ruleref uri="#Heures_sans_minutes"/> </item>
+	            <item> <ruleref uri="#Heures_avec_minutes"/> </item>	  		
+	    </one-of>
+			<tag>   
+				out.H = rules.latest().H ;
+				out.MN = rules.latest().MN ;
+				out.NTMN = rules.latest().NTMN;
+				out.text = rules.latest().text;
+			</tag>
+    </rule>
+
+
+	
+
+	
+	<rule id = "Heures_sans_minutes" scope="public">
+		
+		<one-of>
+			<item> une <tag> out.text = " une "; out.H = 1;  </tag> </item>
+			<item> <ruleref uri="grammaire_nombre_v3.grxml#nombre"/>
+				<tag>   
+					out.MN = 0 ;
+					out.H = rules.nombre.nb ;			
+					out.text =  meta.nombre.text ;
+				</tag>
+			</item>	
+	        <item> 
+				<ruleref uri="#midiminuit"/> 
+				<tag> 
+					out.H = rules.midiminuit.H; 
+					out.text = meta.midiminuit.text;
+				</tag>
+			</item>	
+		</one-of>
+
+		<item repeat = "0-1"> <ruleref uri="#Mot_heure"/> 
+			<tag> 
+				out.text =  out.text + " "+ meta.Mot_heure.text
+			</tag>
+		</item>
+		<tag>   
+			out.NTMN = out.H * 60;
+			out.MN = 0 ;	
+		</tag>
+	</rule>
+
+
+
+
+	<rule id="Heures_avec_minutes" scope="public">
+		<item> 
+			<ruleref uri="#Heures_sans_minutes"/>
+			<tag>
+				out.H = rules.Heures_sans_minutes.H;		
+				out.text =  meta.Heures_sans_minutes.text + " ";
+			</tag>
+		</item>
+
+		<one-of>
+			<item repeat ="0-1" > moins <tag> out.moins = 0; out.text = out.text + "moins" </tag> </item>
+			<item repeat = "0-1"> et <tag> out.text = out.text + "et" </tag> </item> 
+		</one-of>			
+		
+		<item repeat = "0-1"> <ruleref uri="#Minute"/>
+			<tag>
+				out.MN = rules.Minute.MN;		
+				out.text = out.text + " " + meta.Minute.text ;
+				out.fraction = rules.Minute.fraction;
+				
+				if(out.moins == 0){
+					out.MN = 60 - out.MN ;
+					out.H = out.H -1;
+				};		
+									
+				if(out.fraction ==2){
+					out.MN = 30;	
+				};				
+				if(out.fraction ==3){
+					out.MN = 30;
+						
+				};	
+				if(out.fraction ==4){
+					out.MN = 45;
+					out.H = out.H -1;
+				};	
+				if(out.fraction ==5){
+					out.MN = 15;			
+				};										
+			</tag>	
+		</item>
+		<item repeat = "0-1"> <ruleref uri="#Mot_minute"/> 
+					<tag>
+						out.text = out.text + " " + meta.Mot_minute.text;
+					</tag>
+		</item>
+		
+
+		<tag>
+			out.NTMN = out.H * 60 + out.MN;			
+		</tag>
+
+		
+	</rule>
+
+
+	<rule id="midiminuit" scope="public">
+		<one-of>
+			<item> midi   <tag> out.H = 12 ;   </tag></item>
+			<item> minuit <tag> out.H = 24;  </tag></item>
+		</one-of>
+		<tag> out.text = meta.current().text + " " </tag>
+	</rule>
+
+	
+	<rule id="Minute" scope="public">
+		
+		<one-of>
+			<item>
+				<one-of>
+					<item> zero <tag> out.MN = 0 ; out.text = out.text + " zero ";  </tag> </item> 
+					<item> <ruleref uri="grammaire_nombre_v3.grxml#nombre"/>
+						<tag> 
+							out.MN = rules.nombre.nb; 
+							out.text = out.text +" "+ meta.nombre.text ;
+						</tag>
+					</item>
+				</one-of>
+				
+			</item>
+
+			<item repeat = "0-1"> <ruleref uri="#Mots_fractions"/> 
+				<tag>				
+					out.fraction = 	rules.Mots_fractions.fraction;	
+					
+					out.text = out.text + meta.Mots_fractions.text;
+					
+				</tag>
+			</item>
+
+		</one-of>	
+		<tag>   		
+			out.text = meta.current().text + " "
+		</tag>
+	</rule>
+
+
+
+	<rule id="Mots_fractions" scope="public">
+		<one-of>
+			
+			<item> et-demi 	 <tag> out.fraction = 2</tag></item>
+			<item> et-demie  <tag> out.fraction = 3</tag> </item>
+			<item> moins le quart<tag> out.fraction = 4 </tag></item>
+			<item> et quart <tag> out.fraction = 5</tag></item>	
+		</one-of>
+		<tag>
+			
+		 	out.text = meta.current().text + " " ;
+		</tag>
+	</rule>
+
+	
+
+	<rule id="Mot_minute" scope="public">
+		<one-of>
+			<item> minute  </item>
+			<item> minutes </item>
+			<item> min </item>
+			<item> mn </item>
+		</one-of>
+		<tag> out.text = meta.current().text + " " </tag>
+	</rule>
+
+	<rule id="Mot_heure" scope="public">
+		<one-of>
+			<item> heure  </item>
+			<item> heures </item>
+			<item> h  </item>		
+		</one-of>
+		<tag> out.text = meta.current().text + " " </tag>
+	</rule>
+
+</grammar>
+
+

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ATTENTION : UTF-8 = PAS DE CARACTERES ACCENTUES -->
+<!-- si PB message : Invalid UTF-8 character --> 
+
+<vxml version="2.0" xmlns="http://www.w3.org/2001/vxml">
+
+<meta name="description" content="Gestion agenda version 0"/>
+<meta name="author" content="Isabelle Ferrane"/>
+<meta name="copyright" content="IUP SI M2 Pro Dialogue"/>
+
+<!-- Version de base : gestion de dialogue et comprehension -->
+<!-- Demande et verification du numero d'abonne -->
+
+<!-- Activation de la grammaire permettant la detection des -->
+<!-- demandes d'aide formulees par l'utilisateur            -->
+
+<link event="help">
+<grammar src="grammaire_aide.grxml" type="application/srgs+xml" />
+</link>
+
+
+
+<catch event="exit">
+    <prompt> Merci pour utiliser le gestionaire Agenda. Au revoir. </prompt>
+    <exit/>
+</catch>
+
+<link event='exit'>
+<grammar src="exit_grammar.grxml" type="application/srgs+xml" />
+</link>
+
+<!-- dialogue de demande d'information -->
+
+<form id="agenda">
+
+<!-- initialisation des variables internes au formulaire -->
+<var name="reponse" />
+<var name="message_confirm" />
+
+<!-- declaration des variables Javascript -->
+<script>
+       <!-- exemple de gestion de la date au format Ecmascript --> 
+       <!-- Date courante -->
+		var now = new Date(2010, 11, 9, 15, 30, 0, 0);
+       <!-- Valeur de la date fournie par l'utilisateur -->
+		var date_choisie = new Date();
+       <!-- Activation/desactivation du mode TRACE -->
+		var mode_trace ="True";
+</script>
+
+<block>
+   	Bienvenue sur le service de gestion de votre agenda. 
+        Aujourd'hui nous sommes le <value expr="now.toString()" />
+   	<!-- affiche le nombre de millisecondes correspondant -->
+   	<value expr="now.valueOf()" />
+</block>
+
+<!-- Champ/Slot NUMERO D'ABONNE -->
+<field name="num_abonne">
+
+	 <prompt> Quel est votre numero d'abonne ? </prompt>
+
+         <!-- Appel a une grammaire externe -->
+	 <grammar src="grammaire_num_ab_v2.grxml" type="application/srgs+xml"/>
+
+         <!-- Gestion des erreurs -->
+         <help> Donner un nombre compris entre 1 et 999 999 </help>
+         <noinput> Je n'ai pas entendu. Pouvez-vous me preciser votre numero d'abonne ? </noinput>
+	 <nomatch> Je n'ai pas compris. Pouvez-vous me donner votre numero d'abonne S.V.P ? </nomatch>
+
+         <!-- Comportement du systeme une fois ce champ rempli -->
+	 <filled>
+	         Votre numero d'abonne est le <value expr="num_abonne.text" /> 
+                 <if cond="mode_trace=='True'">
+                   TRACE VALEUR  <value expr="num_abonne.nb" />
+                 </if>
+         </filled>
+  </field>
+
+<!-- Champ/Slot de confirmation  -->
+  <field name="confirm">
+         <prompt> Pouvez-vous me le confirmer ? </prompt>
+         
+         <!-- Appel a une grammaire externe -->
+         <grammar src="grammaire_act_lang_confirmation_v2.grxml" type="application/srgs+xml" />
+         
+         <!-- Gestion des erreurs -->
+         <help> Repondez par oui ou non </help>
+         <noinput> Je n'ai pas entendu. Pouvez-vous repeter ? </noinput>
+         <nomatch> Je ne vous ai pas compris. Pouvez-vous repondre par oui ou par non </nomatch>
+         
+         <!-- Comportement du systeme apres confirmation/infirmation --> 
+         <!-- OK ==> On sort ou on passe a une autre sous-tache -->
+         <!-- NOK ==> On efface tout et on recommence --> 
+
+         <filled>
+                 <if cond="confirm=='True'">
+                     <assign name="message_confirm" expr="'TRACE Numero confirme'" />
+                 <else/>
+                     <assign name="message_confirm" expr="'TRACE Numero non confirme'" />
+                     <clear namelist="num_abonne confirm" />
+                 </if>
+                 <!-- Comportement si le mode TRACE est active --> 
+
+                 <if cond="mode_trace=='True'">
+                   TRACE Reponse <value expr="message_confirm" />
+                 </if>
+         </filled>
+
+</field>
+
+<block>
+       <!-- Simulation autorisation d'acces -->
+	Veuillez patienter ... Nous nous connectons a la base abonne....
+        Bonjour Monsieur Dupont. Vous pouvez maintenant acceder a votre agenda !
+</block>
+
+</form>
+</vxml>

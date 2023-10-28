@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar root="ConfirmationDateHoraire" version="1.0" xml:lang="fr">
+
+  <meta name="description" content="grammaire ConfirmationDateHoraire"/>
+  <meta name="author" content="BELEM Moumouni"/>
+  <meta name="copyright" content="M2 Pro Dialogue"/>
+
+  <rule id="ConfirmationDateHoraire"  scope = "public">
+           <tag> 
+               out.H = "";
+                out.MN  = "";
+                out.case = "";
+                out.text = "";
+                out.num_jour  = "";
+                out.nb_jour = "";
+                out.num_mois = "";
+                out.nb_annee  = "";
+           </tag>
+           	<one-of>
+            <item> 
+                <item repeat ="0-1"> A </item>
+                <item> <ruleref uri="BELEM_Moumouni_horaire.grxml#Horaire"/> </item>
+                <tag> 
+                    out.case = 1;
+                    out.H = rules.Horaire.H;
+                    out.MN = rules.Horaire.MN;
+                    out.text = rules.Horaire.text;
+                </tag>
+            </item>
+            <item> Non <tag> out.case  = 2 </tag></item>
+            <item> 
+                <item> Non </item>
+                <item> <ruleref uri="grammaire_dates_v3.grxml#Date"/> </item>
+                <tag> 
+                    out.case = 3;
+                    out.num_jour = rules.Date.num_jour ;
+                    out.nb_jour = rules.Date.nb_jour ;
+                    out.num_mois = rules.Date.num_mois ;
+                    out.nb_annee = rules.Date.nb_annee;
+                    out.text = rules.Date.text;
+                </tag>
+            </item>
+        </one-of>
+    </rule>
+
+</grammar>

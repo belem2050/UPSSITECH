@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ATTENTION : UTF-8 = PAS DE CARACTERES ACCENTUES -->
+<!-- si PB message : Invalid UTF-8 character --> 
+
+<!--<vxml version="2.0" xmlns="http://www.w3.org/2001/vxml">  -->
+
+<vxml version="2.0" xmlns="http://www.w3.org/2001/vxml" >
+
+    <meta name="description" content="Gestion agenda version 2"/>
+    <meta name="author" content="Isabelle Ferrane"/>
+    <meta name="copyright" content="IUP SI M2 Pro Dialogue"/>
+
+
+
+    <link event="help">
+        <grammar src="grammaire_aide.grxml" type="application/srgs+xml" />
+    </link>
+
+
+    <catch event="exit">
+        <prompt> Merci pour utiliser le gestionaire Agenda. Au revoir. </prompt>
+        <exit/>
+    </catch>
+
+    <link event='exit'>
+        <grammar src="exit_grammar.grxml" type="application/srgs+xml" />
+    </link>
+
+
+
+
+    <form id="confirmation">
+
+        <field name="confirm">
+                <prompt> Pouvez-vous me le confirmer ? </prompt>
+                
+                <!-- Appel a une grammaire externe -->
+                <grammar src="grammaire_act_lang_confirmation_v2.grxml" type="application/srgs+xml" />
+                
+                <!-- Gestion des erreurs -->
+                <help> Repondez par oui ou non </help>
+                <noinput> Je n'ai pas entendu. Pouvez-vous repeter ? </noinput>
+                <nomatch> Je ne vous ai pas compris. Pouvez-vous repondre par oui ou par non </nomatch>
+                
+                <!-- Comportement du systeme apres confirmation/infirmation --> 
+                <!-- OK ==> On sort ou on passe a une autre sous-tache -->
+                <!-- NOK ==> On efface tout et on recommence --> 
+
+                <filled>
+                    <return namelist = "confirm" />
+                </filled>
+
+        </field>
+
+    </form>
+</vxml>

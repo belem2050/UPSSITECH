@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="ASCII"?><project>
+    	
+    <version>1.0</version>
+    	
+    <configs>
+        		
+        <config default="true" name="Configuration1" category="opl">
+            			
+            <ref name="SpotPartialModel.mod" type="model">
+			</ref>
+            			
+            <ref name="spotProba1.dat" type="data">
+			</ref>
+            		
+        </config>
+        		
+        <config default="false" name="Configuration2" category="opl">
+            			
+            <ref name="SpotPartialModel.mod" type="model">
+			</ref>
+            			
+            <ref name="spotProba2.dat" type="data">
+			</ref>
+            		
+        </config>
+        		
+        <config default="false" name="Configuration3" category="opl">
+            			
+            <ref name="SpotPartialModel.mod" type="model">
+			</ref>
+            			
+            <ref name="spotProba3.dat" type="data">
+			</ref>
+            		
+        </config>
+        		
+        <config default="false" name="Configuration4" category="opl">
+            			
+            <ref name="SpotPartialModel.mod" type="model">
+			</ref>
+            			
+            <ref name="spotProba4.dat" type="data">
+			</ref>
+            		
+        </config>
+        		
+        <config default="false" name="Configuration5" category="opl">
+            			
+            <ref name="SpotPartialModel.mod" type="model">
+			</ref>
+            			
+            <ref name="spotProba5.dat" type="data">
+			</ref>
+            		
+        </config>
+        	
+    </configs>
+    	
+
+</project>

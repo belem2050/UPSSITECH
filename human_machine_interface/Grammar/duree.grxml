@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar root="Duree" version="1.0" xml:lang="fr">
+
+  <meta name="description" content="grammaire duree"/>
+  <meta name="author" content="BELEM Moumouni"/>
+  <meta name="copyright" content="M2 Pro Dialogue"/>
+
+
+    <rule id="Duree"  scope = "public">
+        <item> <ruleref uri="BELEM_Moumouni_horaire.grxml#Horaire"/> </item>
+    </rule>
+</grammar>

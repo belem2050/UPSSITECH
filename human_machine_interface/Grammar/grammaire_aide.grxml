@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar root="Aide" version="1.0" xml:lang="fr">
+
+  <meta name="description" content="grammaire aide"/>
+  <meta name="author" content="Isabelle Ferrane"/>
+  <meta name="copyright" content="M2 Pro Dialogue"/>
+
+  <rule id="Aide" >
+        <item repeat="0-1"> excusez-moi </item>
+        <item repeat="0-1"> pouvez-vous m </item>
+        <item repeat="0-1"> svp </item>
+        <item repeat="0-1"> je voudrais de l </item>
+        <item repeat="0-1"> je voudrais savoir </item>
+        <one-of>
+      	        <item> quoi faire </item>
+      	        <item> faire quoi </item>
+      	        <item> faire </item>
+      	        <item> aider </item>
+      	        <item> aide </item>
+	</one-of>
+  </rule>
+
+</grammar>

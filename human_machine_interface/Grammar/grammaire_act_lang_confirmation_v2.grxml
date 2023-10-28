@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<grammar version="1.0" root="reponse" xml:lang="fr">
+
+<meta name="description" content="Reponse Confirmation"/>
+<meta name="author" content="Isabelle Ferrane"/>
+<meta name="copyright" content="IUP SI M1"/>
+
+<!-- Confirmation ou non confirmation -->
+<rule id="reponse" scope="public">
+      <one-of>
+              <item> <ruleref uri="#oui" /> <tag> out= "True" </tag> </item>
+              <item> <ruleref uri="#non" /> <tag> out= "False" </tag> </item>
+      </one-of>
+      <item repeat="0-1"> <ruleref uri="#politesse" /> </item>
+</rule> 
+
+        <rule id="oui" >
+		<one-of>
+			<item repeat="1-2"> oui               </item>
+			<item> <ruleref uri="#suite_oui" />   </item>
+                        <item> oui <ruleref uri="#suite_oui" /> </item>
+                </one-of>
+        </rule>
+        
+        <rule id="suite_oui">
+              <one-of>
+                        <item> c_est ca             </item>
+                        <item> c_est bon            </item>
+			<item> c_est bien ca        </item>
+			<item> okay                 </item>
+			<item> ouais                </item>
+                        <item> d_accord             </item>
+                        <item> affirmatif           </item>
+		</one-of>
+	</rule>
+
+        <rule id="non" >
+               <one-of>
+                        <item repeat="1-2"> non     </item>
+                        <item> <ruleref uri="#suite_non" />   </item>
+                        <item> oui <ruleref uri="#suite_non" /> </item>
+               </one-of>
+        </rule>
+        
+        <rule id="suite_non">
+               <one-of>
+			<item> ce n'est pas ca              </item>
+                        <item> ce n'est pas ca du tout      </item>
+                        <item> ce n'est pas du tout ca      </item>
+                        <item> c_est pas ca                 </item>
+                        <item> c_est pas ca du tout         </item>
+                        <item> c_est pas du tout ca         </item>
+                        <item> pas du tout                  </item>
+                        <item> c_est pas bon                </item>
+                        <item> negatif                      </item>
+		</one-of>
+	</rule>
+
+	<rule id="politesse">
+	      <one-of>
+	      <item> merci            </item>
+              <item> merci merci      </item>
+              <item> merci bien       </item>
+              <item> merci beaucoup   </item>
+              <item> grand merci      </item>
+	      </one-of>
+	</rule>
+</grammar>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar root="Lieu" version="1.0" xml:lang="fr">
+
+  <meta name="description" content="grammaire lieu"/>
+  <meta name="author" content="BELEM Moumouni"/>
+  <meta name="copyright" content="M2 Pro Dialogue"/>
+    
+  <rule id="Lieu"  scope = "public">
+        <tag> out.text = "" </tag>
+      
+        <item> salle <tag> out.text = out.text + "salle" </tag></item>
+        <item>
+            <ruleref uri="grammaire_nombre_v3.grxml#nombre"/>
+            <tag>	
+				out.text =  out.text + " " + meta.nombre.text ;
+            </tag>
+        </item>
+
+        <item repeat = "0-1"> du <tag> out.text = out.text +" " + "du" </tag></item>
+        <item repeat = "0-1"> a la</item>
+        <item repeat = "0-1"> a <tag> out.text = out.text +" " + "a" </tag></item>
+        <item repeat="0-1">
+            <one-of>
+                <item> U3 <tag> out.text = out.text + " " + "U3" </tag></item>
+                <item> U2 <tag> out.text = out.text + " " + "U2" </tag></item>
+                <item> U4 <tag> out.text = out.text + " " + "U4" </tag></item>
+                <item> MFJA <tag> out.text = out.text + " " + "MFJA" </tag></item>
+            </one-of>  
+        </item>      
+    </rule>
+
+</grammar>

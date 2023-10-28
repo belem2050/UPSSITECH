@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar version="1.0" root="reservation" xml:lang="en">
+
+<meta name="description" content="grammar for ordering a pizza and a drink"/>
+<meta name="author" content="OptimSys, s.r.o., Czech Republic (http://www.optimsys.cz)"/>
+<meta name="copyright" content="free for any purpose"/>
+
+<rule id="politness1">
+  <item repeat="0-1"> stp </item>
+  <item repeat="0-1">
+    
+    <one-of>
+      <item> Je voudrais reserver la </item>
+      <item> Demande de reservation de</item>
+    </one-of>
+  </item>
+</rule>
+
+<rule id="politness2">
+  <item repeat="0-1">
+    <one-of>
+      <item> stp </item>
+      <item> merci </item>
+    </one-of>
+  </item>
+</rule>
+
+<rule id="reservation" scope="public">
+  <tag>out.reservation = new Object;</tag>
+
+  <ruleref uri="#politness1"/>
+  <item repeat="1-">
+        <one-of>
+            <item>
+            <item repeat="0-1"> la </item>
+                <ruleref uri="lieu.grxml#Lieu"/>
+                <tag>out.reservation.lieu = rules.Lieu</tag>
+            </item>
+            <item repeat="0-1"> a </item>
+            <item>
+                <item repeat="0-1"> pour le</item>
+                <ruleref uri="objet.grxml#Object_reunion"/>
+                <tag>out.reservation.objet = rules.Object_reunion</tag>
+            </item>
+            <item>
+                <item repeat="0-1"> pour</item>             
+                <ruleref uri="grammaire_dates_v3.grxml#Date"/>
+                <tag>out.reservation.date = rules.Date</tag>
+            </item>
+
+            <item>
+                <item repeat="0-1"> a </item>
+                <ruleref uri="BELEM_Moumouni_horaire.grxml#Horaire"/>
+                <tag>out.reservation.heure = rules.Horaire</tag>
+            </item>
+
+        </one-of>
+
+
+        <ruleref uri="#politness2"/>
+    </item>
+</rule>
+
+
+</grammar>

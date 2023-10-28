@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<grammar version="1.0" root="chiffres" xml:lang="fr">
+
+<meta name="description" content="Liste Chiffres"/>
+<meta name="author" content="Isabelle Ferrane"/>
+<meta name="copyright" content="IUP SI M1"/>
+
+<!-- Chiffres de 0 a 9 -->
+<rule id="chiffres" scope="public">
+		<one-of>
+			<item> zero    <tag> out.nb = 0 </tag> </item>
+			<item> un      <tag> out.nb = 1 </tag> </item>
+			<item> deux    <tag> out.nb = 2 </tag> </item>
+			<item> trois   <tag> out.nb = 3 </tag> </item>
+			<item> quatre  <tag> out.nb = 4 </tag> </item>
+			<item> cinq    <tag> out.nb = 5 </tag> </item>
+			<item> six     <tag> out.nb = 6 </tag> </item>
+			<item> sept    <tag> out.nb = 7 </tag> </item>
+			<item> huit    <tag> out.nb = 8 </tag> </item>
+			<item> neuf    <tag> out.nb = 9 </tag> </item>
+		</one-of>
+	</rule>
+</grammar>

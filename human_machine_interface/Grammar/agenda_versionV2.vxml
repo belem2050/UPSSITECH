@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ATTENTION : UTF-8 = PAS DE CARACTERES ACCENTUES -->
+<!-- si PB message : Invalid UTF-8 character --> 
+
+<vxml version="2.0" xmlns="http://www.w3.org/2001/vxml">
+
+<meta name="description" content="Gestion agenda version 0"/>
+<meta name="author" content="Isabelle Ferrane"/>
+<meta name="copyright" content="IUP SI M2 Pro Dialogue"/>
+
+<!-- Version de base : gestion de dialogue et comprehension -->
+<!-- Demande et verification du numero d'abonne -->
+
+<!-- Activation de la grammaire permettant la detection des -->
+<!-- demandes d'aide formulees par l'utilisateur            -->
+
+<link event="help">
+       <grammar src="grammaire_aide.grxml" type="application/srgs+xml" />
+</link>
+
+<!-- dialogue de demande d'information -->
+
+
+<form id="agenda">
+
+<!-- initialisation des variables internes au formulaire -->
+<var name="reponse" />
+<var name="message_confirm" />
+
+<!-- declaration des variables Javascript -->
+<script>
+       <!-- exemple de gestion de la date au format Ecmascript --> 
+       <!-- Date courante -->
+		var now = new Date(2010, 11, 9, 15, 30, 0, 0);
+       <!-- Valeur de la date fournie par l'utilisateur -->
+		var date_choisie = new Date();
+       <!-- Activation/desactivation du mode TRACE -->
+		var mode_trace ="False";
+</script>
+
+<block>
+   	Bienvenue sur le service de gestion de votre agenda. 
+        Aujourd'hui nous sommes le <value expr="now.toString()" />
+   	<!-- affiche le nombre de millisecondes correspondant -->
+   	<value expr="now.valueOf()" />
+</block>
+
+<!-- Champ/Slot NUMERO D'ABONNE -->
+       <field name="num_abonne">
+
+
+       <prompt> Quel est votre numero d'abonne ? </prompt>
+
+         <!-- Appel a une grammaire externe -->
+	<grammar src="grammaire_num_ab_v2.grxml" type="application/srgs+xml"/>
+
+  <!-- Gestion des erreurs -->
+       <help> Donner un nombre compris entre 1 et 2500 </help>
+       <noinput> Je n'ai pas entendu. Pouvez-vous me preciser votre numero d'abonne ? </noinput>
+       <nomatch> Je n'ai pas compris. Pouvez-vous me donner votre numero d'abonne S.V.P ? </nomatch>
+       <filled>
+         <!-- Comportement du systeme une fois ce champ rempli -->
+
+              <if cond="num_abonne.nb &gt; 0 &amp; num_abonne.nb &lt; 2501">
+              
+                     Votre numero d'abonne est le <value expr="num_abonne.nb" /> 
+                     <if cond="mode_trace=='True'">
+                            TRACE VALEUR  <value expr="num_abonne.nb" />
+                     </if>    
+              <else/>
+                     <clear namelist="num_abonne"/>
+              </if>
+       </filled>
+	 
+</field>
+
+
+
+<!-- Champ/Slot de confirmation  -->
+
+       <subdialog name="confirmation_num_abonne" src="sous_dialogue.vxml" >
+
+              <filled>
+                     <if cond="confirmation_num_abonne.confirm == 'False'">
+                            <clear namelist="num_abonne  confirmation_num_abonne" />
+                     </if>
+              </filled>
+       </subdialog>
+
+
+
+
+       <field name="date_reservation">
+
+              <prompt> Quelle est votre date de reservation ? </prompt>
+
+                     <!-- Appel a une grammaire externe -->
+              <grammar src="grammaire_dates_v3.grxml" type="application/srgs+xml"/>
+
+              <!-- Gestion des erreurs -->
+              <help> Donner une date de reservation en format "le +Jour +  num_jour + Mois + annee" en lettres  </help>
+              <noinput> Je n'ai pas entendu. Pouvez-vous me preciser votre date de reservation ? </noinput>
+              <nomatch> Je n'ai pas compris. Pouvez-vous me donner votre date de reservation S.V.P ? </nomatch>
+
+                     <!-- Comportement du systeme une fois ce champ rempli -->
+              <filled>
+                   <prompt> Vous voulez reserver une salle pour <value expr="date_reservation.text" />. A quelle heure ?  </prompt>
+              </filled>
+       </field>
+
+
+<!--HORAIRE-->
+
+       <field name="horaire">
+
+              <prompt>  Votre horaire : </prompt>
+              <!-- Appel a une grammaire externe -->
+              <grammar src="confirmer_Date_donner_Horaire.grxml" type="application/srgs+xml"/>
+
+              <!-- Gestion des erreurs -->
+              <help> Donner une horaire comprise entre 00h00 et 23h59 </help>
+              <noinput> Je n'ai pas entendu. Pouvez-vous me preciser votre horaire ? </noinput>
+              <nomatch> Je n'ai pas compris. Pouvez-vous me donner votre horaire S.V.P ? </nomatch>
+
+              <!-- Comportement du systeme une fois ce champ rempli -->
+              <filled>                    
+                     <if cond="horaire.case==1">             
+                            <if cond=" horaire.H  &gt; -1 &amp; horaire.H &lt;24 &amp; horaire.MN &gt;-1&amp; horaire.MN &lt;60">
+                                   <if  cond=" horaire.H  &gt; 6 &amp; horaire.H &lt;20">
+                                          votre horaire de debut de reservation est <value expr="horaire.text" /> 
+                                   <else/>
+                                          <prompt> Salle non disponible !Horaire non comprise entre 7h30 et 19h30 </prompt>
+                                          <clear namelist="horaire"/>
+                                   </if>    
+                            <else/>
+                                   <prompt> Horaire non comprise entre 00h00 et 23h59 </prompt>
+                                   <clear namelist="horaire" />
+                            </if>   
+                     <elseif cond ="horaire.case==2"/>          
+                            <clear namelist = "date_reservation"/>
+                            <clear namelist = "horaire"/>
+                       
+                     <elseif cond="horaire.case==3"/>
+                            <assign name="date_reservation.num_jour "  expr=" horaire.num_jour" />
+                            <assign name="date_reservation.nb_jour "  expr=" horaire.nb_jour" />
+                            <assign name="date_reservation.num_mois " expr=" horaire.num_mois" />
+                            <assign name="date_reservation.nb_annee " expr=" horaire.nb_annee" />
+                            <assign name="date_reservation.text " expr=" horaire.text" />
+                            <prompt> Votre nouvelle date est <value expr="date_reservation.text" />. A quelle heure</prompt>
+                            <clear namelist = "horaire"/>
+                     </if>
+              </filled>
+       </field>
+
+
+
+
+
+       <!-- Champ/Slot de confirmation  -->
+
+       <!-- Champ/Slot de confirmation  -->
+       <subdialog name="confirmation_horaire" src="sous_dialogue.vxml" >
+              <filled>
+                     <if cond="confirmation_horaire.confirm == 'False'">
+                            <clear namelist="horaire confirmation_horaire" />
+                     </if>
+              </filled>
+       </subdialog>
+
+       
+
+<!--duree-->
+
+      <field name="duree">
+
+              <prompt> Une duree SVP? </prompt>
+              <!-- Appel a une grammaire externe -->
+              <grammar src="BELEM_Moumouni_horaire.grxml" type="application/srgs+xml"/>
+
+              <!-- Gestion des erreurs -->
+              <help> Donner une duree de moins de 8 h heures </help>
+              <noinput> Je n'ai pas entendu. Pouvez-vous me preciser votre duree ? </noinput>
+              <nomatch> Je n'ai pas compris. Pouvez-vous me donner votre duree S.V.P ? </nomatch>
+
+              <!-- Comportement du systeme une fois ce champ rempli -->
+              <filled>
+                     <if cond="duree.H &lt; 8">
+                            
+                            Votre duree de reservation est <value expr="duree.text" /> 
+                            
+                     <else/>
+                            <prompt> duree excedant 8 heures </prompt>
+                            <clear namelist="duree"/>
+                     </if>
+
+                    
+              </filled>
+       </field>
+
+
+
+
+       <!-- Champ/Slot de confirmation  -->
+       <subdialog name="confirmation_duree" src="sous_dialogue.vxml" >
+              <filled>
+                     <if cond="mode_trace=='True'">
+                     ----------TRACE SOUS DIALOGUE CONFIRMATION NUM ABONNEE------------
+                     </if>
+                     <if cond="confirmation_duree.confirm=='False'">
+                            <clear namelist="duree confirmation_duree" />
+                     </if>
+              </filled>
+       </subdialog>
+
+<!--Objet-->
+
+<field name="objet">
+
+       <prompt> Une objet SVP? </prompt>
+       <!-- Appel a une grammaire externe -->
+       <grammar src="objet.grxml" type="application/srgs+xml"/>
+
+       <!-- Gestion des erreurs -->
+       <help> Donner une objet au format </help>
+       <noinput> Je n'ai pas entendu. Pouvez-vous me preciser votre objet ? </noinput>
+       <nomatch> Je n'ai pas compris. Pouvez-vous me donner votre objet S.V.P ? </nomatch>
+
+    <!-- Comportement du systeme une fois ce champ rempli -->
+       <filled>
+              Votre objet de reservation est <value expr="objet.text" /> 
+       </filled>
+</field>
+
+<!-- Champ/Slot de confirmation  -->
+<subdialog name="confirmation_objet" src="sous_dialogue.vxml" >
+       <filled>
+              <if cond="mode_trace=='True'">
+              ----------TRACE SOUS DIALOGUE CONFIRMATION NUM ABONNEE------------
+              </if>
+              <if cond="confirmation_objet.confirm=='False'">
+                     <clear namelist="objet confirmation_objet" />
+              </if>
+       </filled>
+</subdialog>
+
+
+
+<!--Lieu-->
+
+<field name="lieu">
+
+       <prompt> Une lieu SVP? </prompt>
+       <!-- Appel a une grammaire externe -->
+       <grammar src="lieu.grxml" type="application/srgs+xml"/>
+
+       <!-- Gestion des erreurs -->
+       <help> Donner une lieu au format </help>
+       <noinput> Je n'ai pas entendu. Pouvez-vous me preciser votre horaire ? </noinput>
+       <nomatch> Je n'ai pas compris. Pouvez-vous me donner votre horaire S.V.P ? </nomatch>
+
+       <!-- Comportement du systeme une fois ce champ rempli -->
+       <filled>
+              Votre lieu de reservation est <value expr="lieu.text" /> 
+       </filled>
+</field>
+
+
+<subdialog name="confirmation_lieu" src="sous_dialogue.vxml" >
+        <filled>
+                <if cond="mode_trace=='True'">
+                    ----------TRACE SOUS DIALOGUE CONFIRMATION NUM ABONNEE------------
+                </if>
+                <if cond="confirmation_lieu.confirm=='False'">
+                    <clear namelist="lieu confirmation_lieu" />
+                </if>
+        </filled>
+</subdialog>
+
+
+  
+
+
+<block>
+       <!-- Simulation autorisation d'acces -->
+       Veuillez patienter ... Nous nous connectons a la base abonne....
+       Bonjour Monsieur Dupont. Vous pouvez maintenant acceder a votre agenda !
+</block>
+
+</form>
+</vxml>
+
+

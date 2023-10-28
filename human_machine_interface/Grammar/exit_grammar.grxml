@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar root="Sortir" version="1.0" xml:lang="fr">
+
+  <meta name="description" content="grammaire sortir"/>
+  <meta name="author" content="BELEM Moumouni"/>
+  <meta name="copyright" content="M2 Pro Dialogue"/>
+
+  <rule id="Sortir" >
+        <item repeat="0-1"> excusez-moi </item>
+        <item repeat="0-1"> pouvez-vous </item>
+        <item repeat="0-1"> svp </item>
+        <item repeat="0-1"> je sohaite </item>
+        <item repeat="0-1"> je voudrais </item>
+
+        <one-of>
+                  <item> sortir </item>
+                  <item> quitter </item>
+        </one-of>
+
+        <item repeat="0-1"> de l'application </item>
+        <item repeat="0-1"> l'application </item>
+  </rule>
+
+</grammar>

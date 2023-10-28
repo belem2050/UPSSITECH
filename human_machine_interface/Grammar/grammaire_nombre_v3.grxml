@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- fichier grammaire_nombre_v2.grxml -->
+<!-- reconnaitre un nombre, lui attribuer une valeur numerique .nb -->
+<!-- tout en memorisant la suite de mots qui correspond .text -->
+
+<grammar version="1.0" root="nombre" xml:lang="fr">
+
+<meta name="description" content="grammaire nombres"/>
+<meta name="author" content="Isabelle Ferrane"/>
+<meta name="copyright" content="free for any purpose"/>
+
+<rule id="nombre" scope="public">
+<!-- Axiome Nombre >=> chiffres | dizaines | centaines | milliers 
+				| dizaines de milliers | centaines de milliers -->
+<!-- out.nb = valeur numerique -->
+<!-- out.text = concatenation des nombres en lettres pour la synthese TTS -->
+<one-of>
+			<!-- chiffres 0 et un : cas particulier ensuite avec les dizaines  -->
+				<item> zero
+                                       <tag> out.nb = 0 ; out.text = meta.current().text</tag>
+                                </item>
+				<item> un      
+                                       <tag> out.nb = 1 ; out.text = meta.current().text</tag>
+                                </item>
+
+                       <!-- chiffres de 2 a 9 -->
+				<item> <ruleref uri="#chiffres" /> 
+                                       <tag> out.nb = rules.chiffres.nb ; out.text = meta.current().text</tag>
+                                </item>
+
+			<!-- nombres 10 et 11 : cas particulier ensuite : soixante et onze, ... -->
+				<item> dix   
+                                       <tag> out.nb = 10 ; out.text = meta.current().text </tag>
+                                </item>
+				<item> onze  
+                                       <tag> out.nb = 11 ; out.text = meta.current().text </tag>
+                                </item>
+
+                        <!-- nombres de 12 a 99 -->
+				<item> <ruleref uri="#dizaines" />
+                                       <tag> out.nb = rules.dizaines.nb ; out.text = meta.dizaines.text</tag>
+                                </item>
+
+                        <!-- de 100 a 199 -->
+				<item> <ruleref uri="#centaines" /> 
+                                       <tag> out.nb = rules.centaines.nb ; out.text = meta.centaines.text</tag>
+                                </item>
+                                
+                        <!-- 200 a 999 -->
+				<item>
+					<ruleref uri="#chiffres" />
+					<tag> out.nb = rules.chiffres.nb ; out.text = meta.chiffres.text </tag>
+					<ruleref uri="#centaines" />
+                                        <tag> out.nb = ((out.nb -1) * 100) + rules.centaines.nb;
+                                              out.text = out.text + " " + meta.centaines.text ;
+                                        </tag>
+				</item>
+
+			<!-- nombres 1 000 a 1 999 -->
+				<item> <ruleref uri="#milliers" />
+				       <tag> out.nb = rules.milliers.nb ; out.text = meta.milliers.text </tag>
+                                </item>
+                        <!-- nombres 2 000 a 9 999 -->
+				<item>
+					<ruleref uri="#chiffres" /> 
+					<tag> out.nb = rules.chiffres.nb ; out.text = meta.chiffres.text</tag>
+					<ruleref uri="#milliers" /> 
+					<tag> out.nb = ((out.nb -1) * 1000) + rules.milliers.nb;
+					      out.text = out.text + " " + meta.milliers.text;
+                                        </tag>
+				</item>
+			<!-- nombres 10 000 a 10 999 -->
+				<item> 
+					dix <ruleref uri="#milliers" /> 
+					<tag> out.nb = (rules.milliers.nb + 9000) ; out.text = meta.milliers.text</tag>
+                                        <tag> out.nb = 9000 + rules.milliers.nb ;
+					      out.text = "dix " + meta.milliers.text;
+                                        </tag>
+				</item>
+                        <!-- nombres 11 000 a 11 999 -->
+				<item>
+					onze <ruleref uri="#milliers" />
+                                        <tag> out.nb = 10000 + rules.milliers.nb ;
+                                              out.text = "onze " + meta.milliers.text;
+                                        </tag>
+				</item>
+			<!-- nombres 12 000 a 99 999 -->
+				<item> 
+					<ruleref uri="#dizaines" />
+					<ruleref uri="#milliers" />
+					<tag> out.nb = ((rules.dizaines.nb -1)*1000) + rules.milliers.nb ;
+					      out.text = meta.dizaines.text + " " + meta.milliers.text;
+                                        </tag>
+				</item>
+			<!-- nombres 100 000 a 999 999 -->
+				<item> 
+					<ruleref uri="#centaines" /> 
+					<ruleref uri="#milliers" /> 
+					<tag> out.nb = ((rules.centaines.nb -1)  * 1000) + rules.milliers.nb;
+					      out.text = meta.centaines.text + " " + meta.milliers.text;
+                                        </tag>
+				</item>
+        </one-of>
+
+</rule>
+	<!-- Chiffres    -->
+		<rule id="chiffres">
+			<one-of>
+				<item> deux      <tag> out.nb = 2 ; </tag> </item>
+				<item> trois     <tag> out.nb = 3 ; </tag> </item>
+				<item> quatre    <tag> out.nb = 4 ; </tag> </item>
+				<item> cinq      <tag> out.nb = 5 ; </tag> </item>
+				<item> six       <tag> out.nb = 6 ; </tag> </item>
+				<item> sept      <tag> out.nb = 7 ; </tag> </item>
+				<item> huit      <tag> out.nb = 8 ; </tag> </item>
+				<item> neuf      <tag> out.nb = 9 ; </tag> </item>
+			</one-of>
+                        <tag> out.text = meta.current().text </tag>
+		</rule>
+	<!-- Dizaines --> 
+		<rule id="dizaines">
+			<one-of>
+				<item> <ruleref uri="#dizaines1" /> 
+                                       <tag> out.nb = rules.dizaines1.nb;
+                                             out.text = meta.dizaines1.text;
+                                       </tag>
+                                </item>
+				<item> <ruleref uri="#dizaines2" /> 
+                                       <tag> out.nb = rules.dizaines2.nb;
+                                             out.text = meta.dizaines2.text;
+                                       </tag>
+                                </item>
+				<item> <ruleref uri="#dizaines3" /> 
+                                       <tag> out.nb = rules.dizaines3.nb;
+                                             out.text = meta.dizaines3.text;
+                                       </tag>
+                                </item>
+				<item> <ruleref uri="#dizaines4" /> 
+                                       <tag> out.nb = rules.dizaines4.nb;
+                                             out.text = meta.dizaines4.text;
+                                       </tag>
+                                </item>
+			</one-of>
+		</rule>
+
+		<rule id="dizaines1">
+			<one-of>
+				<item> douze          <tag> out.nb = 12;  </tag> </item>
+				<item> treize         <tag> out.nb = 13;  </tag> </item>
+				<item> quatorze       <tag> out.nb = 14;  </tag> </item>
+				<item> quinze         <tag> out.nb = 15;  </tag> </item>
+				<item> seize          <tag> out.nb = 16;  </tag> </item>
+				<item> dix sept       <tag> out.nb = 17;  </tag> </item>
+				<item> dix huit       <tag> out.nb = 18;  </tag> </item>
+				<item> dix neuf       <tag> out.nb = 19;  </tag> </item>
+			</one-of>
+			<tag> out.text = meta.current().text + " "  </tag>
+		</rule>
+
+		<rule id="dizaines2">
+			<one-of>
+				<item> vingt          <tag> out.nb = 20; </tag> </item>
+				<item> trente         <tag> out.nb = 30; </tag> </item>
+				<item> quarante       <tag> out.nb = 40; </tag> </item>
+				<item> cinquante      <tag> out.nb = 50; </tag> </item>
+				<item> soixante       <tag> out.nb = 60; </tag> </item>
+			</one-of>
+			<tag> out.text = meta.current().text + " "  </tag>
+		</rule>
+		<rule id="dizaines3">
+			<one-of>
+				<item> soixante dix         <tag> out.nb = 70; </tag> </item>
+				<item> quatre vingt         <tag> out.nb = 80;  </tag> </item>
+                                <item> quatre vingts        <tag> out.nb = 80; </tag> </item>
+				<item> quatre vingt dix     <tag> out.nb = 90; </tag>
+                                </item>
+			</one-of>
+			<tag> out.text = meta.current().text + " "  </tag>
+		</rule>
+		<rule id="dizaines4">
+			<one-of>
+				<item> <ruleref uri="#dizaines2" /> et un 
+                                       <tag> out.nb = rules.dizaines2.nb + 1;
+                                             out.text = meta.dizaines2.text + "et un";
+                                       </tag>
+                                </item>
+				<item> 
+					<ruleref uri="#dizaines2" />
+					<ruleref uri="#chiffres" />
+                                        <tag> out.nb = rules.dizaines2.nb + rules.chiffres.nb ;
+                                              out.text = meta.dizaines2.text + meta.chiffres.text;
+                                        </tag>
+				</item> 
+				<item> soixante et onze       
+                                       <tag> out.nb = 71; out.text = "soixante et onze ";   </tag>
+                                </item>
+				<item> soixante <ruleref uri="#dizaines1" /> 
+                                       <tag> out.nb = 60 + rules.dizaines1.nb;
+                                             out.text = "soixante " + meta.dizaines1.text;
+                                       </tag>
+                                </item>
+				<item> quatre vingt un        
+                                       <tag> out.nb = 81; out.text = "";  out.text = "quatre vingt un "; </tag>
+                                </item>
+				<item> 
+					quatre vingt <ruleref uri="#chiffres" /> 
+					<tag> out.nb = 80 + rules.chiffres.nb;
+					      out.text = "quatre vingt " + meta.chiffres.text;
+                                        </tag>
+				</item> 
+				<item> quatre vingt onze 
+                                       <tag> out.nb = 91; out.text = "quatre vingt onze "; </tag>
+                                </item>
+				<item> quatre vingt <ruleref uri="#dizaines1" /> 
+                                       <tag> out.nb = 80 + rules.dizaines1.nb;
+                                             out.text = "quatre vingt " + meta.dizaines1.text;
+                                       </tag>
+                                </item>
+			</one-of>
+		</rule>
+
+	<!-- Centaines -->
+		<rule id="centaines">
+			<!-- Nombres  100 a 999 -->
+			<one-of>
+				<item> cent  <tag> out.nb = 100 ; out.text = meta.current().text + " "; </tag>
+                                </item>
+				<item> <ruleref uri="#centaines1" /> 
+                                       <tag> out.nb = rules.centaines1.nb ; out.text = meta.centaines1.text </tag>
+                                </item>
+                                	<!-- Nombres  200, 300, 900 -->
+				<item> <ruleref uri="#chiffres" />
+                                       <one-of>
+                                                <item> cents <tag> out.text = meta.chiffres.text + "cents "; </tag> </item>
+                                                <item> cent  <tag> out.text = meta.chiffres.text + "cent "; </tag> </item>
+                                       </one-of>
+                                       <tag> out.nb = rules.chiffres.nb * 100; </tag>
+                                </item>
+                                	<!-- Nombres  901 a 999 -->
+				<item> 
+					<ruleref uri="#chiffres" /> 
+					<ruleref uri="#centaines1" />
+					<tag> out.nb = ((rules.chiffres.nb - 1)* 100) + rules.centaines1.nb;
+					      out.text = meta.chiffres.text + " " + meta.centaines1.text;
+                                        </tag>
+				 </item>
+			</one-of>
+		</rule>
+
+		<rule id="centaines1">
+			<!-- Nombres  101 a 199 -->
+			<one-of>
+				<item> cent un     <tag> out.nb = 101; out.text = "cent un "; </tag> </item>
+			   <!-- Nombres  102 a 109 -->
+				<item> cent <ruleref uri="#chiffres" /> 
+                                       <tag> out.nb = 100 + rules.chiffres.nb; out.text = "cent " + meta.chiffres.text; </tag>
+                                </item>
+				<item> cent dix   <tag> out.nb = 110; out.text = "cent dix "; </tag> </item>
+				<item> cent onze  <tag> out.nb = 111; out.text = "cent onze "; </tag> </item>
+			   <!-- Nombres  112 a 199 -->
+				<item> cent <ruleref uri="#dizaines" />
+                                       <tag> out.nb = 100 + rules.dizaines.nb; out.text = "cent " + meta.dizaines.text; </tag>
+                                </item>
+			</one-of>
+		</rule>
+
+	<!-- Milliers -->
+		<rule id="milliers">
+		      	<!-- Nombres  1000 a 1009 -->
+			<one-of>
+				<item> mille      <tag> out.nb = 1000; out.text = "mille "; </tag> </item>
+				<item> mille un   <tag> out.nb = 1001; out.text = "mille un "; </tag> </item>
+					<!-- Nombres  1002 a 1009 -->
+				<item> mille <ruleref uri="#chiffres" /> 
+				       <tag> out.nb = 1000 + rules.chiffres.nb;
+				             out.text = "mille " + meta.chiffres.text;
+                                       </tag>
+                                </item>
+                                	<!-- Nombres  1010 a 1099 -->
+				<item> mille dix  <tag> out.nb = 1010; out.text = "mille dix ";</tag> </item>
+				<item> mille onze <tag> out.nb = 1011; out.text = "mille onze "; </tag> </item>
+				<item> mille <ruleref uri="#dizaines" /> 
+				       <tag> out.nb = 1000 + rules.dizaines.nb;
+				             out.text = "mille " + meta.dizaines.text;
+                                       </tag>
+                                </item>
+                                	<!-- Nombres  1100 a 1999 -->
+				<item> mille <ruleref uri="#centaines" />
+				       <tag> out.nb = 1000 + rules.centaines.nb ;
+				             out.text = "mille " + meta.centaines.text;
+                                       </tag>
+                                </item>
+			</one-of>
+		</rule>
+</grammar>

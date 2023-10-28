@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- fichier grammaire_date.grxml -->
+
+<grammar version="1.0" root="Date" xml:lang="fr" >
+
+<meta name="description" content="grammaire des dates"/>
+<meta name="author" content="Isabelle Ferrane"/>
+<meta name="copyright" content="free for any purpose"/>
+
+<!-- grammaire regle syntagmatique Date -> [le +] [Jour +] Num_Jour + Mois [+ Annee] -->
+<!-- cette grammaire extrait le texte correspondant a la date enoncee .text -->
+<!-- ainsi que les valeurs necessaires a la generation d'une date au format Ecmascript -->
+	
+     <rule id = "Date" scope = "public">
+	      <one-of>
+	              <item> <ruleref uri="#Sans_annee"/> </item>
+	              <item> <ruleref uri="#Avec_annee"/> </item>
+	      </one-of>
+	               <tag>       
+						out.num_jour = rules.latest().num_jour ;
+						out.nb_jour = rules.latest().nb_jour ;
+						out.num_mois = rules.latest().num_mois ;
+						out.nb_annee = rules.latest().nb_annee;
+						out.text = rules.latest().text;
+
+                    </tag>
+     </rule>
+
+<!-- regle pour gerer la presence de l'ennee ou pas -->
+<!-- PB avec repeat 0-1 sur l'annee : deux mille deux = 1002 ?? --> 
+
+	<rule id = "Sans_annee" >
+		<!-- le facultatif -->
+                <item repeat="0-1"> le </item>
+
+                <!-- initialisation des champs semantiques text = contient le texte decode -->
+                <!-- num_jour contient le numero associe au jour -->
+                <!-- Attention : dans Ecmascript dimanche = 0, lundi = 1, ... samedi = 7 donc -1 = non renseigne -->
+		<tag> out.text = '' </tag>
+		<tag> out.num_jour = -1 </tag>
+
+		<!-- Analyse de Jour facultatif : on recupere l'info semantique determinee par la regle #Jour -->
+		<item repeat="0-1">
+			<ruleref uri="#Jour" />
+			<tag> out.num_jour = rules.Jour.num_jour; out.text = meta.Jour.text + " " </tag>
+		</item>
+
+                <!-- Analyse de Num_Jour de premier ou 2 a 31 normalement : test a faire ulterieurement sur le nombre
+                     analyse par la grammaire NOMBRE -->
+
+                <one-of>
+	               <item> premier <tag> out.nb_jour = 1; out.text = "premier "; </tag> </item>
+	               <item>
+                             <ruleref uri="grammaire_nombre_v3.grxml#nombre" />
+                             <tag> out.nb_jour = rules.nombre.nb; out.text = out.text + meta.nombre.text ; </tag>
+                       </item>
+                </one-of>
+
+                <!-- Analyse du Mois : classe de mot-cle basique -->
+		<item>
+			<ruleref uri="#Mois" />
+			<tag> out.num_mois = rules.Mois.num_mois ; out.text = out.text + " " + meta.Mois.text; </tag>
+		</item>
+	 
+	        <!-- initialisation de l'annee : non determinee = 0 -->
+		<tag> out.nb_annee = 0 </tag>
+	</rule>
+
+<!-- version avec l'annee specifiee -->
+        <rule id="Avec_annee">
+                <item> <ruleref uri="#Sans_annee"/>
+                                <tag> out.num_jour = rules.latest().num_jour ;
+                                      out.nb_jour = rules.latest().nb_jour ;
+                                      out.num_mois = rules.latest().num_mois ;
+                                </tag>
+                </item>
+	        <item>
+			<ruleref uri="grammaire_nombre_v3.grxml#nombre" />
+			<tag> out.nb_annee = rules.nombre.nb ; out.text = out.text + " " + meta.nombre.text </tag>
+		</item>
+        </rule>
+
+  <!-- grammaire : regle lexicale/ classe de mots Jour -->
+	<rule id= "Jour">
+		<one-of>
+				<item> lundi      <tag> out.num_jour = 1 ;  </tag> </item>
+				<item> mardi      <tag> out.num_jour = 2 ;  </tag> </item>
+				<item> mercredi   <tag> out.num_jour = 3 ;  </tag> </item>
+				<item> jeudi      <tag> out.num_jour = 4 ;  </tag> </item>
+				<item> vendredi   <tag> out.num_jour = 5 ;  </tag> </item>
+				<item> samedi     <tag> out.num_jour = 6 ;  </tag> </item>
+				<item> dimanche   <tag> out.num_jour = 0 ;  </tag> </item>
+		</one-of>
+		<tag> out.text = meta.current().text + " " </tag>
+	</rule>
+
+  <!-- grammaire : regle lexicale/classe de mots Mois -->
+  <!-- Attention / dans Ecmascript janvier = 0, fevrier = 1, ... -->
+	<rule id="Mois">
+			<one-of>
+				<item> janvier <tag> out.num_mois = 0 ;     </tag> </item>
+				<item> fevrier <tag> out.num_mois = 1 ;     </tag> </item>
+				<item> mars    <tag> out.num_mois = 2 ;     </tag> </item>
+				<item> avril   <tag> out.num_mois = 3 ;     </tag> </item>
+    				<item> mai     <tag> out.num_mois = 4 ;     </tag> </item>
+				<item> juin    <tag> out.num_mois = 5 ;     </tag> </item>
+				<item> juillet <tag> out.num_mois = 6 ;     </tag> </item>
+				<item> aout    <tag> out.num_mois = 7 ;     </tag> </item>
+				<item> septembre <tag> out.num_mois = 8 ;   </tag> </item>
+				<item> octobre   <tag> out.num_mois = 9 ;   </tag> </item>
+				<item> novembre  <tag> out.num_mois = 10 ;  </tag> </item>
+				<item> decembre  <tag> out.num_mois = 11 ;  </tag> </item>
+			</one-of>
+			<tag> out.text = meta.current().text + " " </tag>
+	</rule>
+</grammar>
