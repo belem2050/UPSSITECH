@@ -5,7 +5,7 @@ img = img(:,:,1)>1; %car image en 3 composants et on la veut en 1 (noir et blanc
 
 imgNous = double(imread('G:\Mon Drive\UPSSITECH\S8\TI\TP5\imageNous.png')); %Double car sinon erreurs car imread matrice non signé
 imgNous = imgNous(:,:,1)>1;
-
+z
 I2 = double(imread('G:\Mon Drive\UPSSITECH\S8\TI\TP5\I2.png')); %Double car sinon erreurs car imread matrice non signé
 I2 = I2(:,:,1);
 
