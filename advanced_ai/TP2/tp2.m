@@ -1,0 +1,90 @@
+close all;
+clear;
+Image = double(imread('TP2\Moravec1.bmp'));
+
+%imwrite('C:\Users\blm2844a\Documents\MATLAB\TP2\ali.pgm',Image);
+
+%%
+A = [-5 -3 -1 1 3 5];
+B = [-5 -3 -1 1 3 5];
+s = size(Image);
+valeurs = [];
+
+%%
+PontsSaillanceImage = Image;
+PointInterets = PontsSaillanceImage;
+
+for i = 6 : s(1)-11
+    for j = 6: s(2)-11
+         valeurs = [];
+        for a = A
+            for b = B
+                val = sum(sum(abs(Image(i:i+5, j:j+5) - Image(i+a:i+a+5, j+b:j+b+5))));
+                valeurs =[valeurs val];
+            end
+
+        end
+        minval = min(valeurs);
+       PontsSaillanceImage(i,j) = minval;
+    end
+
+end
+
+%%
+for i = 2:s(1)-1
+    for j = 2: s(2)-1
+        maxlocal = max([PontsSaillanceImage(i,j+1),PontsSaillanceImage(i,j-1),PontsSaillanceImage(i+1,j),PontsSaillanceImage(i-1,j),PontsSaillanceImage(i,j)]);
+        PointInterets(i,j) = maxlocal;
+    end
+end
+
+figure;
+subplot(2,2,1)
+imagesc(Image);
+colormap(gray(256));
+
+
+subplot(2,2,2)
+imagesc(PontsSaillanceImage);
+colormap(gray(256));
+
+subplot(2,2,3)
+imagesc(PointInterets);
+colormap(gray(256));
+
+PointsInteretsFinaux = PointInterets;
+
+nombre=0;
+for i=1:s(1)
+  for j=1:s(2)
+    if PointInterets(i,j) == PontsSaillanceImage(i,j)
+      PointsInteretsFinaux(i,j) = 255;
+      nombre = nombre +1;
+     else
+      PointsInteretsFinaux(i,j) = 0;
+    end
+  end
+end
+ subplot(2,2,4)
+ title('PointsInteretsFinaux')
+imagesc(PointsInteretsFinaux);
+colormap(gray(256));
+
+
+%%
+%%d
+%I = [134 137 150;138 150 158;149 155 160]
+I =[ 125 124 123;124 123 121;122 120 123];
+
+ LBP1 = LBP(I);
+
+vecteursLBP =[];
+
+for i=1:s(1)
+  for j = 1:s(2)
+      if PointsInteretsFinaux(i,j) == 255
+          vecteursLBP = [vecteursLBP LBP(PointsInteretsFinaux(i,j))];
+
+      end
+  end
+end

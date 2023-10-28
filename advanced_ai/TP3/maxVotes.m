@@ -1,0 +1,14 @@
+function Max = maxVotes(V)
+
+Max =[];
+s =size(V);
+
+for r=1:s(1)
+    for t =1:s(2)
+        %for 
+        
+    end
+end
+
+
+

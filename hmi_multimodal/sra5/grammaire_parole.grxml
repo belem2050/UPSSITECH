@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE grammar PUBLIC "-//W3C//DTD GRAMMAR 1.0//EN"
+                "grammar.dtd">
+<!-- the default grammar language is FR  -->
+<grammar  version="1.0"
+          mode ="voice"
+          xmlns="http://www.w3.org/2001/06/grammar"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.w3.org/2001/06/grammar
+                              grammar.xsd"
+          xml:lang="fr-FR" root="Speech_Recognition" tag-format="semantics/1.0">
+
+	<rule id="Speech_Recognition" scope="public">
+		<item> <ruleref uri="#action"/> <tag> out.action = rules.action </tag></item>
+		<item repeat="0-1"> <ruleref uri="#pointage"/> <tag> out.pointage = rules.pointage </tag></item>
+		<item repeat="0-1"> <ruleref uri="#forme"/> <tag> out.forme = rules.forme </tag></item>
+		<item repeat="0-1"> <ruleref uri="#couleur"/> <tag> out.couleur = rules.couleur </tag></item>
+		<item repeat="0-1"> <ruleref uri="#localisation"/> <tag> out.localisation = rules.localisation</tag></item>
+		<ruleref special="GARBAGE"/>
+		
+		<tag> out = "action=" + out.action + " where=" + out.pointage + " form=" + out.forme + " color=" + out.couleur + " localisation=" + out.localisation </tag> 
+	</rule>
+
+	<rule id="action">
+		<tag> out = "none" </tag>
+		<one-of>
+			<item> créer <tag> out = "CREATE" </tag></item>
+			<item> dessiner <tag> out = "CREATE" </tag></item>
+			<item> tracer <tag> out = "CREATE" </tag></item>
+
+			<item> changer couleur<tag> out = "COLOR" </tag></item>
+			<item> modifier couleur<tag> out = "COLOR" </tag></item>
+			<item> couleur<tag> out = "COLOR" </tag></item>
+
+			<item> supprimer <tag> out = "DELETE" </tag></item>
+			<item> effacer <tag> out = "DELETE" </tag></item>
+			
+			<item> déplacer  <tag> out = "MOVE" </tag></item>
+			<item> bouger  <tag> out = "MOVE" </tag></item>
+
+			<item> quitter <tag> out = "QUIT" </tag></item>
+			<item> sortir <tag> out = "QUIT" </tag></item>
+			<item> arrêter <tag> out = "QUIT" </tag></item>
+		</one-of>
+	</rule>
+
+	<rule id="pointage">
+		<tag> out = "none" </tag>
+		<one-of>
+			<item> cette forme <tag> out = "THIS" </tag></item>
+			<item> ça <tag> out = "THIS" </tag></item>
+		</one-of>
+	</rule>
+
+	<rule id="forme">
+		<tag> out = "none" </tag>
+		<ruleref special="GARBAGE"/>			
+		<one-of>
+			<item> triangle <tag> out = "TRIANGLE" </tag></item>
+			<item> losange <tag> out = "DIAMOND" </tag></item>
+			<item> cercle <tag> out = "CIRCLE" </tag></item>
+			<item> rectangle <tag> out = "RECTANGLE" </tag></item>
+		</one-of>
+	</rule>
+
+	<rule id="couleur">
+		<tag> out = "none" </tag>
+		<ruleref special="GARBAGE"/>	
+		<one-of>
+			<item> rouge <tag> out = "RED" </tag></item>
+			<item> orange <tag> out = "ORANGE" </tag></item>
+			<item> jaune <tag> out = "YELLOW" </tag></item>
+			<item> vert <tag> out = "GREEN" </tag></item>
+			<item> bleu <tag> out = "BLUE" </tag></item>
+			<item> violet <tag> out = "PURPLE" </tag></item>
+			<item> noir <tag> out = "DARK" </tag></item>
+		</one-of> 
+	</rule>
+
+	<rule id="localisation">
+		<tag> out = "none" </tag>	
+		<one-of>
+			<item> là <tag> out = "THERE" </tag></item>
+			<item> ici <tag> out = "THERE" </tag></item>
+			<item> à cet endroit <tag> out = "THERE" </tag></item>
+		</one-of>
+	</rule>
+</grammar>
