@@ -1,3 +1,5 @@
-# MotionPlanning
+# Motion_planning
+This class is about Mition planning and specially regaring ```Rapidly exploring Random Tree``` 
+
 # Disclaimer
-## Docker needed and README not up to day.
+A docker provided by the teacher is here needed for running.
