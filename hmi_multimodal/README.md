@@ -23,7 +23,7 @@ proposed by MIT about 40 years ago
 * Make sure, processing 4 is installed and in the directory PutThatThere run the file PutThatThere.pde .
 
 ## Demos
-I did some [videos](https://youtu.be/QzJ53f-3rpY this link https://youtu.be/QamJEru_Y34 for QUIT option) demo you could see in /Demos or directly on my Youtube channel.
+I did some videos [videos](https://youtu.be/QzJ53f-3rpY), [here](ttps://youtu.be/QamJEru_Y34) for ```QUIT``` option)on my Youtube channel.
 
 ## Conception and implementation
 To understand how all of this has been done, have a see in the pdf file PutThatThere.pdf which is /Documents and also the initial project done by my teacher M.Philippe Truillet. 
